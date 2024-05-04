@@ -1,0 +1,8 @@
+body {
+    font-family: 'Montserrat';
+}
+
+a, a:hover {
+    text-decoration: none;
+    color: #17a2b8;
+}

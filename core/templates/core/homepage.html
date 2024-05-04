@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }}Homepage{% endblock title %}
+
+{% block content %}
+    <h1 class="my-3">Benvenuti in Agorà!</h1>
+    {% for sezione in object_list %}
+    <div class="card my-3">
+        <div class="card-header">
+            <a href="{% url 'single-section-view' sezione.pk %}"><h5>{{ sezione.nome_sezione }}</h5></a>
+            <h6 class="card-text">{{ sezione.descrizione }}</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3">
+                    <img src="{{ sezione.logo_sezione.url }}" style="max-width:100%;" alt="section-image"/>
+                    <p class="my-1">Discussioni totali: {{ sezione.discussione_set.count}}</p>
+                    <p class="my-1">Messaggi totali: {{ sezione.get_all_posts }}</p>
+                </div>
+                <div class="col-lg-9">
+                    <p>Ultime discussioni</p>
+                    <table class="table table-hover">
+                        <tbody>
+                            {% for discussione in sezione.get_last_discussions %}
+                                <tr class="row">
+                                    <td class="col-lg-7"><a href="{% url 'view-discussion' discussione.pk %}">{{ discussione.titolo }}</a></td>
+                                    <td class="col-lg-3"><a href="{% url 'user-profile' discussione.autore.username %}">{{ discussione.autore }}</a></td>
+                                    <td class="col-lg-2">Posts: {{ discussione.post_set.count }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock content %}

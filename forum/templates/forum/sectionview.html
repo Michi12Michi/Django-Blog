@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }}{{ sezione.nome_sezione }}{% endblock title %}
+
+{% block content %}
+<div class="card my-3">
+    <div class="card-header">
+        <h3><strong>{{ sezione.nome_sezione }}</strong></h3>
+        <h6 class="card-text">{{ sezione.descrizione }}</h6>
+    </div>
+    <div class="card-body">
+        <a class="btn btm-sm btn-info" href="{% url 'create-discussion' sezione.pk %}">Crea discussione!</a>
+        <table class="table mt-3">
+            <thead>
+                <tr class="row">
+                    <th class="col-lg-6 col-4">Titolo</th>
+                    <th class="col-lg-2 col-3">Autore</th>
+                    <th class="col-lg-2 col-2">Post:</th>
+                    <th class="col-lg-2 col-3">Ultimo post</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for discussione in discussioni %}
+                    <tr class="row">
+                        <td class="col-lg-6 col-4"><a href="{% url 'view-discussion' discussione.pk %}">{{ discussione.titolo }}</a></th>
+                        <td class="col-lg-2 col-3"><a href="{% url 'user-profile' discussione.autore.username %}">{{ discussione.autore }}</a></th>
+                        <td class="col-lg-2 col-2">{{ discussione.post_set.count }}</th>
+                        <td class="col-lg-2 col-3">{{ discussione.post_set.last.data_creazione|timesince }}</th>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

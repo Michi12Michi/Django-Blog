@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }}{{ discussione.titolo }}{% endblock title %}
+
+{% block content %}
+{% for post in posts %}
+    <div class="card my-3">
+    {% if forloop.first and not "page" in request.get_full_path %}
+        <div class="card-header pb-0">
+            <h3>{{ discussione.titolo }}</h3>
+            <p class="text-muted">{{ discussione.data_creazione|date:"D d M Y" }}
+            <br>in: <a href="{% url 'single-section-view' post.discussione.sezione.pk %}">{{ discussione.sezione }}</a></p>
+        </div>
+    {% else %}
+        <div class="card-header py-0 m-0">
+            <p class="text-muted mb-0">{{ discussione.data_creazione|date:"D d M Y" }}</p>
+            {% if request.user == post.autore %}
+                <a href="{% url 'delete-post' id=discussione.pk pk=post.pk %}" style="color:red; text-decoration:none;">X cancella</a>
+            {% endif %}
+        </div>
+        
+    {% endif %}
+    <div class="card-body">
+        <div class="row">
+            <div class="col-xl-2 col-4">
+                <p class="mb-0"><a href="{% url 'user-profile' post.autore.username %}"><strong>{{ post.autore }}</strong></a></p>
+                <p class="text-muted mb-0">Utente da: {{ post.autore.date_joined|date:"M Y" }}</p>
+                <p class="text-muted">#posts: {{ post.autore.posts.count }}</p>
+            </div>
+            <div class="col-xl-10 col-8">
+                <p class="my-0">{{ post.contenuto|linebreaks }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<div class="pagination">
+    <span class="step-links">
+        {% if posts.has_previous %}
+            <a href="{% url 'view-discussion' discussione.pk %}">&laquo; Inizio</a>
+            <a href="?page={{ posts.previous_page_number }}">precedente</a>
+        {% endif %}
+
+        <span class="current">
+            Pagina {{ posts.number }} di {{ posts.paginator.num_pages }}.
+        </span>
+
+        {% if posts.has_next %}
+            <a href="?page={{ posts.next_page_number }}">prossima</a>
+            <a href="?page={{ posts.paginator.num_pages }}">ultima &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+
+{% if request.user.is_authenticated %}
+    {% include "forum/form_post.html" %}
+{% else %}
+    <div class="alert alert-info" role="alert">
+        Devi effettuare il <a href="{% url 'login' %}?next={{ request.get_full_path }}">login</a> per commentare!
+    </div>
+{% endif %}
+
+{% endblock  %}
